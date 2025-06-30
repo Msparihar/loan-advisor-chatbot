@@ -31,16 +31,6 @@ The project is built with a modern tech stack designed for performance and scala
 
 The application follows a client-server architecture where the frontend communicates with the backend ML service to provide real-time lender matching.
 
-```mermaid
-graph TD
-    A[User on React Frontend] -->|1. Enters loan details via chat| B(Next.js App);
-    B -->|2. Sends POST request with user data| C{FastAPI Backend};
-    C -->|3. Processes data and runs ML model| D[Loan Matcher ML Model];
-    D -->|4. Returns top 3 lenders & match score| C;
-    C -->|5. Sends JSON response| B;
-    B -->|6. Displays results in chat UI| A;
-```
-
 1. **User Interaction**: The user provides their loan requirements through a chat interface on the Next.js frontend.
 2. **API Request**: The frontend sends the collected data to the FastAPI backend via a REST API call.
 3. **ML Processing**: The backend's ML model (`loan_matcher.py`) processes the input and scores available lenders.
@@ -134,4 +124,4 @@ Follow these instructions to set up and run the project locally.
 * [x] Code comments explaining data flow and scoring logic.
 * [x] Mobile-responsive UI design.
 * [x] Dockerized services with `Dockerfile`s present.
-"# loan-advisor-chatbot" 
+"# loan-advisor-chatbot"
