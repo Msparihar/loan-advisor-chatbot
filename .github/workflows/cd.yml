@@ -29,14 +29,14 @@ jobs:
 
       - name: Pull latest Docker image
         # Using sudo is fine, but you could also configure Docker to run without it for the runner user.
-        run: sudo docker pull manishsparihar/test-ml:latest
+        run: docker pull manishsparihar/test-ml:latest
 
       - name: Stop and remove old container
-        run: sudo docker rm -f test-ml-container || true
+        run: docker rm -f test-ml-container || true
 
       - name: Run new Docker Container with env file
         run: |
-          sudo docker run -d \
+          docker run -d \
             -p 8000:8000 \
             --name test-ml-container \
             --env-file ./.env \
