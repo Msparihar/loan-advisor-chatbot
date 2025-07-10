@@ -1,0 +1,43 @@
+name: CD - Deploy ML Service
+
+on:
+  workflow_run:
+    workflows: ["CI - Build and Push ML Service"]
+    types:
+      - completed
+
+jobs:
+  # The job name is changed to 'deploy' for clarity
+  deploy:
+    # ------------------ CRITICAL SAFETY CHECKS ------------------
+    # 1. Only run this job if the triggering CI workflow was successful.
+    # 2. Only run if the CI workflow was on the 'main' branch.
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+
+    runs-on: self-hosted
+
+    steps:
+      # This step assumes you have a single GitHub Secret named OPENAI_API_KEY
+      # containing the entire content of your .env file.
+      - name: Create .env file from secrets
+        env:
+          # This maps the GitHub Secret to an environment variable for this step
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        # This writes the content of the variable into a file named .env
+        # in the runner's working directory.
+        run: echo "$OPENAI_API_KEY" > .env
+
+      - name: Pull latest Docker image
+        # Using sudo is fine, but you could also configure Docker to run without it for the runner user.
+        run: sudo docker pull manishsparihar/test-ml:latest
+
+      - name: Stop and remove old container
+        run: sudo docker rm -f test-ml-container || true
+
+      - name: Run new Docker Container with env file
+        run: |
+          sudo docker run -d \
+            -p 8000:8000 \
+            --name test-ml-container \
+            --env-file ./.env \
+            manishsparihar/test-ml:latest
